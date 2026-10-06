@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2016 The CyanogenMod Project
+     SPDX-FileCopyrightText: 2017-2026 The LineageOS Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<!--
+     Smallest width outranks available height, and UI mode does not.
+     A television at least 480dp tall would otherwise take layout-h480dp.
+-->
+<resources>
+    <item name="welcome_activity" type="layout">@layout/welcome_activity_large</item>
+</resources>

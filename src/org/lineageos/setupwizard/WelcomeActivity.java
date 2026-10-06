@@ -1,6 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2016 The CyanogenMod Project
- * SPDX-FileCopyrightText: 2017-2024 The LineageOS Project
+ * SPDX-FileCopyrightText: 2017-2026 The LineageOS Project
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -9,6 +9,7 @@ package org.lineageos.setupwizard;
 import static org.lineageos.setupwizard.SetupWizardApp.ACTION_EMERGENCY_DIAL;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Build;
 import android.view.View;
@@ -25,6 +26,12 @@ public class WelcomeActivity extends SubBaseActivity {
     private static final String ACTION_ACCESSIBILITY_SETTINGS =
             "android.settings.ACCESSIBILITY_SETTINGS_FOR_SUW";
 
+    // The default welcome composition needs a tall window. Below this height the
+    // Glif header is an empty band, because Welcome sets no header title. Leave
+    // it in place at the 600dp two-pane width, where that header is the left pane.
+    private static final int SHORT_WELCOME_HEIGHT_DP = 480;
+    private static final int TWO_PANE_WIDTH_DP = 600;
+
     @Override
     protected void onStartSubactivity() {
     }
@@ -32,6 +39,7 @@ public class WelcomeActivity extends SubBaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hideEmptyHeaderOnShortWindow();
         onSetupStart();
         SystemBarHelper.setBackButtonVisible(getWindow(), false);
         setNextText(R.string.start);
@@ -73,6 +81,18 @@ public class WelcomeActivity extends SubBaseActivity {
 
     @Override
     public void onBackPressed() {
+    }
+
+    private void hideEmptyHeaderOnShortWindow() {
+        Configuration config = getResources().getConfiguration();
+        if (config.screenHeightDp >= SHORT_WELCOME_HEIGHT_DP
+                || config.screenWidthDp >= TWO_PANE_WIDTH_DP) {
+            return;
+        }
+        View header = findViewById(com.google.android.setupdesign.R.id.sud_layout_header);
+        if (header != null) {
+            header.setVisibility(View.GONE);
+        }
     }
 
     @Override
