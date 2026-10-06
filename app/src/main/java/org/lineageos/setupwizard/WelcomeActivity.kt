@@ -6,6 +6,7 @@
 package org.lineageos.setupwizard
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
@@ -36,6 +37,7 @@ class WelcomeActivity : SubBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        hideEmptyHeaderOnShortWindow()
         onSetupStart()
         SystemBarHelper.setBackButtonVisible(window, false)
 
@@ -144,11 +146,26 @@ class WelcomeActivity : SubBaseActivity() {
         }
     }
 
+    // The default welcome composition needs a tall window. Below this height the
+    // Glif header is an empty band, because Welcome sets no header title. Leave
+    // it in place at the 600dp two-pane width, where that header is the left pane.
+    private fun hideEmptyHeaderOnShortWindow() {
+        val config: Configuration = resources.configuration
+        if (config.screenHeightDp >= SHORT_WELCOME_HEIGHT_DP ||
+            config.screenWidthDp >= TWO_PANE_WIDTH_DP
+        ) {
+            return
+        }
+        findViewById<View>(SudR.id.sud_layout_header)?.visibility = View.GONE
+    }
+
     override val layoutResId = R.layout.welcome_activity
 
     override val titleResId = -1
 
     companion object {
+        private const val SHORT_WELCOME_HEIGHT_DP = 480
+        private const val TWO_PANE_WIDTH_DP = 600
         private const val ACTION_ACCESSIBILITY_SETTINGS =
             "android.settings.ACCESSIBILITY_SETTINGS_FOR_SUW"
     }
